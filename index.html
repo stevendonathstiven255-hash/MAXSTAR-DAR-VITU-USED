@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAXSTAR DAR VITU USED</title>
+<style>
+:root{--bg:#fff;--fg:#14213d;--card:#f2f5fa;--acc:#e8a200;--mut:#5b6678;--bd:#dde3ee}
+@media(prefers-color-scheme:dark){:root{--bg:#0e1420;--fg:#eef1f7;--card:#182033;--mut:#9aa6bd;--bd:#27314a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5}
+header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 5%;background:#14213d;color:#fff;position:sticky;top:0;z-index:5}
+button,.btn{background:var(--acc);color:#14213d;border:0;border-radius:8px;padding:9px 16px;font-weight:700;cursor:pointer;text-decoration:none;font-size:.95rem;display:inline-block}
+.ghost{background:transparent;color:#fff;border:1px solid #fff}
+.wa-btn{background:#25d366;color:#fff;text-align:center;text-decoration:none;display:block;margin-top:8px;padding:8px;border-radius:8px;font-weight:700;font-size:.9rem}
+.call-btn{background:#14213d;color:#fff;border:1px solid var(--acc);text-align:center;text-decoration:none;display:block;margin-top:8px;padding:8px;border-radius:8px;font-weight:700;font-size:.9rem}
+
+/* Hero Section with Custom Background Image */
+.hero{position:relative;overflow:hidden;padding:120px 5%;text-align:center;color:#fff;background:url('https://images.unsplash.com/photo-1555529771-835f59fc5efe?w=1200') no-repeat center center/cover}
+.hero:after{content:'';position:absolute;inset:0;background:rgba(20,33,61,.8)}
+.hero .in{position:relative;z-index:2}
+.hero h1{margin:0 0 10px;font-size:clamp(1.8rem,6vw,3rem)}
+
+section{padding:32px 5%;max-width:1100px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;overflow:hidden}
+.card img{width:100%;height:170px;object-fit:cover;display:block;background:var(--bd)}
+.card>div{padding:12px}.price{color:var(--acc);font-weight:800}.mut{color:var(--mut);font-size:.9rem}
+input,textarea,select{width:100%;padding:10px;margin:6px 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--fg);font:inherit}
+.panel{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:20px}
+.hide{display:none}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center;z-index:9;padding:16px}
+.modal>div{background:var(--bg);padding:22px;border-radius:14px;width:100%;max-width:360px}
+.err{color:#d33;font-size:.9rem;min-height:1.2em}
+footer{text-align:center;padding:24px;background:#14213d;color:#fff}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.row button{padding:6px 12px;font-size:.85rem}
+.contact-box{background:var(--card);border:1px solid var(--bd);padding:20px;border-radius:12px;text-align:center}
+</style>
+</head>
+<body>
+
+<header>
+  <b>MAXSTAR DAR VITU USED</b>
+  <span>
+    <button class="ghost" id="loginBtn">Admin Login</button>
+    <button class="ghost hide" id="logoutBtn">Logout</button>
+  </span>
+</header>
+
+<div class="hero">
+  <div class="in">
+    <h1>Quality Used Items in Dar es Salaam</h1>
+    <p>Find & Buy the best affordable used electronics, furniture, and appliances.</p>
+  </div>
+</div>
+
+<main>
+  <!-- ADMIN PANEL WITH FILE UPLOAD -->
+  <section id="adminSection" class="hide">
+    <div class="panel">
+      <h2>Admin Dashboard</h2>
+      <p class="mut">Upload items straight from your device storage, edit, or remove products.</p>
+      
+      <form id="productForm">
+        <h3>Add / Update Product</h3>
+        <input type="hidden" id="prodId">
+        <input type="text" id="prodTitle" placeholder="Product Name (e.g. Rice Cooker & Kettle)" required>
+        <input type="text" id="prodPrice" placeholder="Price (e.g. TZS 65,000)" required>
+        
+        <label class="mut" style="font-size:0.85rem;display:block;margin-top:8px;">Upload Image from Device:</label>
+        <input type="file" id="prodImageFile" accept="image/*">
+        
+        <textarea id="prodDesc" placeholder="Short description..." rows="2" style="margin-top:8px;"></textarea>
+        <button type="submit" id="saveProdBtn">Upload Product</button>
+        <button type="button" class="ghost" id="cancelEditBtn" style="color:var(--fg);border-color:var(--bd);" onclick="resetForm()">Cancel</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- PUBLIC PRODUCT DISPLAY GRID -->
+  <section>
+    <h2>Available Products</h2>
+    <div class="grid" id="productGrid">
+      <!-- Dynamic products load here -->
+    </div>
+  </section>
+
+  <!-- SELL TO US REQUEST SECTION -->
+  <section>
+    <div class="panel">
+      <h2>Want to Sell Your Used Items to Us?</h2>
+      <p class="mut">Have electronics, furniture, or home appliances to sell? Send us details directly via WhatsApp!</p>
+      <input type="text" id="sellerName" placeholder="Your Name">
+      <input type="text" id="sellerItem" placeholder="Item Name & Condition (e.g., Used Double Door Fridge)">
+      <input type="text" id="sellerPrice" placeholder="Your Expected Price">
+      <textarea id="sellerDesc" placeholder="Additional details or description..." rows="2"></textarea>
+      <button onclick="sendSellRequest()" style="background:#25d366;color:#fff;margin-top:8px;">Send Sell Request to WhatsApp (0780 664 576)</button>
+    </div>
+  </section>
+
+  <!-- WHATSAPP COMMENT / INQUIRY SECTION -->
+  <section>
+    <div class="panel">
+      <h2>Send Inquiry or Comment via WhatsApp</h2>
+      <p class="mut">Have a question about an item or looking for something specific? Message us directly!</p>
+      <input type="text" id="clientName" placeholder="Your Name">
+      <textarea id="clientMsg" placeholder="Type your comment, question, or order request here..." rows="3"></textarea>
+      <button onclick="sendGeneralWhatsApp()" style="background:#25d366;color:#fff;margin-top:8px;">Send Comment to WhatsApp (0780 664 576)</button>
+    </div>
+  </section>
+
+  <!-- CONTACT SECTION -->
+  <section>
+    <h2>Contact Us</h2>
+    <div class="contact-box">
+      <p>📍 Location: <strong>Mwananyamala, Dar es Salaam</strong></p>
+      <p>📞 Normal Call: <strong>0610 713 676</strong></p>
+      <p>💬 WhatsApp: <strong>0780 664 576</strong></p>
+      <p class="mut">Call us directly for voice inquiries or message us on WhatsApp for orders and fast delivery across Dar es Salaam.</p>
+      
+      <a href="tel:0610713676" class="call-btn" style="max-width:280px;margin:12px auto 0;">📞 Call Now (0610 713 676)</a>
+      <a href="https://wa.me/255780664576?text=Hello%20MAXSTAR%20DAR%20VITU%20USED,%20I%20want%20to%20inquire%20about%20your%20products." class="wa-btn" target="_blank" style="max-width:280px;margin:8px auto 0;">💬 Chat on WhatsApp (0780 664 576)</a>
+    </div>
+  </section>
+</main>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div>
+    <h3>Admin Login</h3>
+    <input type="email" id="adminUser" placeholder="Email (stevendonathstiven255@gmail.com)">
+    <input type="password" id="adminPass" placeholder="Password">
+    <div class="err" id="loginErr"></div>
+    <div class="row" style="justify-content:flex-end">
+      <button class="ghost" style="color:var(--fg);border-color:var(--bd);" id="closeModal">Cancel</button>
+      <button id="submitLogin">Login</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2026 MAXSTAR DAR VITU USED. All rights reserved.</p>
+</footer>
+
+<script>
+  if (!localStorage.getItem('maxstar_products')) {
+    const defaultProducts = [
+      { id: 1, title: 'Rice Cooker & Electric Kettle Set', price: 'TZS 65,000', image: 'https://images.unsplash.com/photo-1555529771-835f59fc5efe?w=500', desc: 'Clean working condition Ailyons kitchen set.' },
+      { id: 2, title: 'Double Door Fridge', price: 'TZS 380,000', image: 'https://images.unsplash.com/photo-1584269600464-37b1b58a9fe7?w=500', desc: 'Well Nest double door refrigerator in good shape.' }
+    ];
+    localStorage.setItem('maxstar_products', JSON.stringify(defaultProducts));
+  }
+
+  let isAdmin = localStorage.getItem('maxstar_is_admin') === 'true';
+
+  const loginBtn = document.getElementById('loginBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const loginModal = document.getElementById('loginModal');
+  const closeModal = document.getElementById('closeModal');
+  const submitLogin = document.getElementById('submitLogin');
+  const adminUser = document.getElementById('adminUser');
+  const adminPass = document.getElementById('adminPass');
+  const loginErr = document.getElementById('loginErr');
+  const adminSection = document.getElementById('adminSection');
+  const productForm = document.getElementById('productForm');
+  const productGrid = document.getElementById('productGrid');
+
+  let currentImageBase64 = '';
+
+  function updateAuthUI() {
+    if (isAdmin) {
+      loginBtn.classList.add('hide');
+      logoutBtn.classList.remove('hide');
+      adminSection.classList.remove('hide');
+    } else {
+      loginBtn.classList.remove('hide');
+      logoutBtn.classList.add('hide');
+      adminSection.classList.add('hide');
+    }
+    renderProducts();
+  }
+
+  loginBtn.onclick = () => loginModal.style.display = 'flex';
+  closeModal.onclick = () => { loginModal.style.display = 'none'; loginErr.innerText = ''; };
+  
+  submitLogin.onclick = () => {
+    if (adminUser.value.trim() === 'stevendonathstiven255@gmail.com' && adminPass.value === '@Steven') {
+      isAdmin = true;
+      localStorage.setItem('maxstar_is_admin', 'true');
+      loginModal.style.display = 'none';
+      adminUser.value = '';
+      adminPass.value = '';
+      loginErr.innerText = '';
+      updateAuthUI();
+    } else {
+      loginErr.innerText = 'Invalid email or password!';
+    }
+  };
+
+  logoutBtn.onclick = () => {
+    isAdmin = false;
+    localStorage.removeItem('maxstar_is_admin');
+    resetForm();
+    updateAuthUI();
+  };
+
+  // Convert uploaded device file to Base64 string for local storage
+  document.getElementById('prodImageFile').onchange = function(e) {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(uploadEvent) {
+        currentImageBase64 = uploadEvent.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  function renderProducts() {
+    const products = JSON.parse(localStorage.getItem('maxstar_products')) || [];
+    productGrid.innerHTML = '';
+
+    if (products.length === 0) {
+      productGrid.innerHTML = '<p class="mut">No products uploaded yet.</p>';
+      return;
+    }
+
+    products.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      
+      const encodedMsg = encodeURIComponent(`Hello MAXSTAR DAR VITU USED, I want to buy this product:\n\n*${p.title}*\nPrice: ${p.price}`);
+      
+      card.innerHTML = `
+        <img src="${p.image}" alt="${p.title}" onerror="this.src='https://via.placeholder.com/300?text=No+Image'">
+        <div>
+          <h3>${p.title}</h3>
+          <div class="price">${p.price}</div>
+          <p class="mut">${p.desc || ''}</p>
+          <div style="margin-top:8px;">
+            <a href="https://wa.me/255780664576?text=${encodedMsg}" class="wa-btn" target="_blank">🛒 Buy via WhatsApp (0780 664 576)</a>
+            <a href="tel:0610713676" class="call-btn">📞 Call to Buy (0610 713 676)</a>
+          </div>
+          ${isAdmin ? `
+            <div class="row" style="margin-top:10px;">
+              <button onclick="editProduct(${p.id})">Edit</button>
+              <button class="ghost" style="color:#d33;border-color:#d33;" onclick="deleteProduct(${p.id})">Delete</button>
+            </div>
+          ` : ''}
+        </div>
+      `;
+      productGrid.appendChild(card);
+    });
+  }
+
+  function sendGeneralWhatsApp() {
+    const name = document.getElementById('clientName').value.trim();
+    const msg = document.getElementById('clientMsg').value.trim();
+
+    if (!msg) {
+      alert('Please type a message before sending.');
+      return;
+    }
+
+    const fullText = encodeURIComponent(`Hello MAXSTAR DAR VITU USED,\n\nCustomer Name: ${name || 'Anonymous'}\nMessage/Comment: ${msg}`);
+    window.open(`https://wa.me/255780664576?text=${fullText}`, '_blank');
+  }
+
+  function sendSellRequest() {
+    const name = document.getElementById('sellerName').value.trim();
+    const item = document.getElementById('sellerItem').value.trim();
+    const price = document.getElementById('sellerPrice').value.trim();
+    const desc = document.getElementById('sellerDesc').value.trim();
+
+    if (!item) {
+      alert('Please fill in the item name you want to sell.');
+      return;
+    }
+
+    const fullText = encodeURIComponent(`Hello MAXSTAR DAR VITU USED,\n\nI want to sell an item to you:\n\n*Seller Name:* ${name || 'Customer'}\n*Item:* ${item}\n*Expected Price:* ${price || 'Negotiable'}\n*Details:* ${desc || 'N/A'}`);
+    window.open(`https://wa.me/255780664576?text=${fullText}`, '_blank');
+  }
+
+  productForm.onsubmit = (e) => {
+    e.preventDefault();
+    const id = document.getElementById('prodId').value;
+    const title = document.getElementById('prodTitle').value;
+    const price = document.getElementById('prodPrice').value;
+    const desc = document.getElementById('prodDesc').value;
+
+    let products = JSON.parse(localStorage.getItem('maxstar_products')) || [];
+
+    if (id) {
+      // Editing existing product
+      const existing = products.find(p => p.id == id);
+      const imageToUse = currentImageBase64 ? currentImageBase64 : (existing ? existing.image : '');
+      products = products.map(p => p.id == id ? { id: Number(id), title, price, image: imageToUse, desc } : p);
+    } else {
+      // Adding new product
+      if (!currentImageBase64) {
+        alert('Please select an image file from your device.');
+        return;
+      }
+      const newProduct = { id: Date.now(), title, price, image: currentImageBase64, desc };
+      products.push(newProduct);
+    }
+
+    localStorage.setItem('maxstar_products', JSON.stringify(products));
+    resetForm();
+    renderProducts();
+  };
+
+  window.editProduct = function(id) {
+    const products = JSON.parse(localStorage.getItem('maxstar_products')) || [];
+    const p = products.find(item => item.id == id);
+    if (p) {
+      document.getElementById('prodId').value = p.id;
+      document.getElementById('prodTitle').value = p.title;
+      document.getElementById('prodPrice').value = p.price;
+      document.getElementById('prodDesc').value = p.desc;
+      currentImageBase64 = p.image; // keep existing image if not replaced
+      document.getElementById('saveProdBtn').innerText = 'Update Product';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  window.deleteProduct = function(id) {
+    if (confirm('Are you sure you want to delete this product?')) {
+      let products = JSON.parse(localStorage.getItem('maxstar_products')) || [];
+      products = products.filter(p => p.id != id);
+      localStorage.setItem('maxstar_products', JSON.stringify(products));
+      renderProducts();
+    }
+  };
+
+  function resetForm() {
+    productForm.reset();
+    document.getElementById('prodId').value = '';
+    currentImageBase64 = '';
+    document.getElementById('saveProdBtn').innerText = 'Upload Product';
+  }
+
+  updateAuthUI();
+</script>
+
+</body>
+</html>
